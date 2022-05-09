@@ -1,6 +1,7 @@
 import { ArrowLeft, Camera } from "phosphor-react";
 import { FormEvent, useState } from "react";
 import { FeedbackType, feedbackTypes } from "..";
+import { api } from "../../../libs/api";
 import { CloseButton } from "../../CloseButton";
 import { ScreenshotButton } from "../ScreenshotButton";
 
@@ -20,11 +21,18 @@ export function FeedbackContentStep({
 
     const feedbackTypeInfo = feedbackTypes[feedbackType];
 
-    function handleSubmitFeedback(event: FormEvent) {
+    async function handleSubmitFeedback(event: FormEvent) {
         event.preventDefault();
+
         console.log({
             screenshot,
             comment
+        })
+
+        await api.post('/feedbacks', {
+            type: feedbackType,
+            comment,
+            screenshot,
         })
 
         onFeedbackSent();
@@ -46,7 +54,7 @@ export function FeedbackContentStep({
                 </span>
                 <CloseButton />
             </header>
-            <form onSubmit={handleSubmitFeedback}className="my-4 w-full">
+            <form onSubmit={handleSubmitFeedback} className="my-4 w-full">
                 <textarea
                     className="min-w-[384px] w-full min-h-[112px] text-sm placeholder-zinc-400 text-zinc-100 border-zinc-600 bg-transparent rounded-md 
                focus:border-[#8257e6] focus:ring-[#8257e6] focus:ring-1 resize-none focus:outline-none 
@@ -60,7 +68,7 @@ export function FeedbackContentStep({
 
                     <button
                         type="submit"
-                        disabled={ comment.length===0}
+                        disabled={comment.length === 0}
                         className="p-2 bg-[#8257E6] rounded-md border-transparent 
         flex-1 flex justify-center items-center text-sm 
         hover:bg-[#996DFF] focus:outline-none focus:ring-2 focus:ring-offset-2
